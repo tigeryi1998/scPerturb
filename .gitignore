@@ -174,14 +174,13 @@ cython_debug/
 .pypirc
 
 # ignore folders
-
 /data
 /tests
 /processed_data 
 /notebook
+/pictures
+/output
 *.ipynb
 *.pt
 *.zip
-/pictures
-/presentation
-/output
+*.mp4
