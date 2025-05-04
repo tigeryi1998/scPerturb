@@ -178,7 +178,7 @@ cython_debug/
 /tests
 /processed_data 
 /notebook
-/pictures
+# /pictures
 /output
 *.ipynb
 *.pt
