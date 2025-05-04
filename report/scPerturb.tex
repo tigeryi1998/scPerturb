@@ -229,7 +229,7 @@ For the best models on Kaggle, they all used an ensemble of 4-5 different models
 
 \section*{Conclusion}
 
-In conclusion, by data augmentation and incorporating biological knowledge such as molecular counts and bond strengths, I am able to create many more input features to boost the power of my ML models. Transformer can also generalize to the unseen data when there is a huge unbalance in the train-test data split. 
+In conclusion, this project demonstrates that data augmentation and deep learning can significantly improve the prediction of gene expression changes in single cells exposed to chemical perturbations. By augmenting limited categorical inputs with statistical summaries, SMILES substructure counts, and molecular fingerprints, we enriched the feature space and enabled models to learn more meaningful biological patterns. Among the models tested, the Transformer model outperformed MLP on the unseen test data, highlighting its superior generalization in imbalanced settings where training and test cell types differ. While MLP offers faster convergence, Transformers are better suited for capturing complex relationships across high-dimensional gene expression outputs. Future work may include model ensembling, graph-based molecular encoders, and semi-supervised learning to further improve prediction accuracy and identify promising drug candidates for leukemia treatment.
 
 
 
