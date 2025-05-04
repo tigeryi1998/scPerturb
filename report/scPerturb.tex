@@ -14,18 +14,21 @@
 
 \title{scPerturb: single cell perturbation}
 \author{Sicheng Yi}
-\date{05/02/2025}		
+\date{05/04/2025}		
 
 \begin{document}
 \maketitle
+
+
 \begin{abstract}
-This project aims to understand how drug compounds alter single cell gene expression levels and whether the up- or down-regulation effects will suppress cancer cell lines among PBMC peripheral white blood cells. Using deep learning models such as MLP and Transformers, we can improve the prediction on how the drugs change the differential expression level of T, B, NK, and myeloid cells to find a potential drug candidate to cure blood cancer leukemia. 
+This project investigates how drug perturbations affect gene expression in single cells, with the goal of identifying potential drug candidates for treating leukemia. By modeling the up and down regulation of genes across various peripheral blood mononuclear cell (PBMC) types, including T cells, B cells, NK cells, and myeloid cells, I aim to predict transcriptomic responses to drug compounds. I employ deep learning models, such as multilayer perceptrons (MLPs) and Transformer , to learn from high-dimensional gene expression and molecular features. The results show that these models can more accurately forecast cell-specific differential expression patterns, enabling informed drug screening and prioritization.
 \end{abstract}
 
 
 \section*{Introduction}
 
-Each year millions of people die of cancer and acute leukemia is very prevalent. Researchers want to understand how the different chemical drug compounds affect gene regulation in peripheral white blood molecular cells (PBMC). The setup of the experiment is shown in Figure~\ref{fig:pbmc}. 
+Each year, millions of people die from cancer, and acute leukemia remains one of the most prevalent and deadly forms. Understanding how chemical drug compounds influence gene regulation in peripheral blood mononuclear cells (PBMCs) is crucial to developing effective treatments. The experimental setup used to study this biological process is illustrated in Figure~\ref{fig:pbmc}.
+
 
 \begin{figure}[htbp]
   \centering
@@ -34,38 +37,50 @@ Each year millions of people die of cancer and acute leukemia is very prevalent.
   \label{fig:pbmc}
 \end{figure}
 
-Blood samples from both healthy and cancer patients are collected and analyzed via single cell RNA and ATAC chromatin peak sequencing analysis. More than 140,000 individual cells are collected and perturbed by 144 chemical compounds to observe the change in expression levels of 18,000+ genes. Those cells are bulked and grouped into several categories: T cells CD4+, T cells CD8+, NK cells, B cells, Myeloid cells. 
+In this experiment, blood samples from both healthy individuals and cancer patients are analyzed using single-cell RNA sequencing (scRNA-seq) and chromatin accessibility profiling (scATAC-seq). Over 140,000 individual cells are perturbed with 144 distinct chemical compounds, and their gene expression responses are recorded for more than 18,000 genes. These cells are further categorized into immune subtypes, including CD4+ T cells, CD8+ T cells, natural killer (NK) cells, B cells, and myeloid cells.
 
-As part of the 2023 NeurIPS Kaggle competition, researchers want the ML community to develop tools and models to predict the differential expression levels of each genes based on the various cell types and small molecular compounds. 
+As part of the 2023 NeurIPS Kaggle competition, participants were asked to develop models capable of predicting differential gene expression responses based on cell types and small molecule compound features. This presents a challenging high-dimensional regression task due to two main factors: (1) the input features, such as cell type and drug compound, are significantly lower in dimension than the output space of gene expression, and (2) the training and test distributions differ, with training samples primarily from T and NK cells, while test samples consist largely of B and myeloid cells.
 
-One of the challenges of this problem is that the input dimension of cell type and drug compound is a lot smaller than the output dimension for the gene expression level for over 18000 genes. Another challenge of this problem is that training data is mostly focused on T and NK cells, while the test data is concentrated in the B cells and Myeloid cells. 
+This project applies and adapts deep learning methods to this biologically grounded prediction task. By augmenting chemical and cellular input features using domain knowledge (e.g., SMILES-based fingerprinting, categorical encoding), and applying multi-target regression models such as multilayer perceptrons (MLPs) and Transformers, I aim to improve generalization to unseen cell types. Additionally, dimensionality reduction techniques like Principal Component Analysis (PCA) are explored to mitigate the computational challenges posed by extremely high-dimensional gene expression outputs. In addition, I investigate the effectiveness of different architectures and pre-processing strategies on a benchmark single-cell genomics dataset.
 
-This project aims to augment the input features and deploy deep learning models such as MLP and transformers to better learn and generalize to the unseen test dataset. 
 
 
 \section*{Related Work}
 
-1. RandomSmiles  \cite{RandomSmiles} 
-
-This study discusses how different atom orderings can lead to varied SMILES strings and how RDKit addresses this with built-in fixes. SMILES is the 1D molecular representation of the drug compounds. The authors introduced this 1D string representation and the biological property such as bond strength and molecular binding sites that will play critical roles in the gene regulation. 
+Recent developments in cheminformatics and single-cell perturbation modeling have enabled the application of deep learning to biological response prediction. My work builds on these foundations by combining molecular representations and single-cell transcriptomic.
 
 
-2. scPerturb \cite{scPerturb}
+\textbf{Randomized SMILES} \cite{RandomSmiles}: 
 
-This resource compiles 44 publicly available single-cell perturbation-response datasets, including transcriptomics and proteomics data. It introduces energy statistics (E-statistics) for quantifying perturbation effects and significance testing, facilitating comparison and integration across datasets.
+They introduced the idea of randomized SMILES strings, demonstrating that varying atom order in molecular SMILES representations can improve generative model performance. This principle motivates our use of molecular fingerprints and SMILES-derived features to represent chemical perturbations more robustly.
 
-3. scRNA-PBMC \cite{scRNA-PBMC}
+\textbf{scPerturb} \cite{scPerturb}: 
 
-This study performed single-cell RNA sequencing on 1.3 million PBMCs white blood cells from 120 individuals exposed to different pathogens, providing insights into gene expression and regulatory responses influenced by genetic background and pathogen exposure.
+They curated the scPerturb database, which harmonizes 44 single-cell perturbation datasets spanning transcriptomic and proteomics. They propose energy statistics (E-statistics) to quantify perturbation effects across heterogeneous conditions. Their work underscores the need for standardized and scalable evaluation frameworks in perturbation-response modeling.
+
+\textbf{PBMC scRNA-seq} \cite{scRNA-PBMC}:  
+
+They generated a comprehensive single-cell RNA-seq dataset on over 1.3 million PBMCs exposed to various pathogens. Their findings highlight immune cell diversity and context-specific gene regulation, reinforcing the biological motivation for our focus on T, B, NK, and myeloid cells under drug perturbations.
+
+\textbf{scGen} \cite{scGen}:  
+
+They proposed scGen, a deep generative model that uses variational autoencoders to predict cellular responses to perturbations. Their model provides a strong baseline for learning perturbation effects from scRNA-seq data, demonstrating the utility of latent space arithmetic for generalization to unseen conditions.
+
+\textbf{GCN for Drug Effects} \cite{GCNdrug}:
+
+They applied graph convolution networks (GCN) and transfer learning to predict drug-induced gene expression profiles. This approach illustrates the value of encoding chemical structure explicitly through molecular graphs, a direction we may explore in future work.
 
 
 
 
 \section*{Datasets}
 
-As part of the scPerturb NeurIPS 2023 Kaggle Competition, the researcher collected healthy and cancer patient's PBMC white blood cells and used 144 drug compounds to perturb the 18000+ genes to get their differential expression levels. More than 140,000 individual cells are bulked into several cell types: T cells CD4+, T cells CD8+, NK cells, B cells, Myeloid cells. 
+This project uses data from the scPerturb NeurIPS 2023 Kaggle Competition, which investigates how drug compounds affect gene expression in peripheral blood mononuclear cells (PBMCs) from both healthy and cancer patients. The dataset includes over 140,000 individual cells categorized into major immune cell types: CD4+ T cells, CD8+ T cells, NK cells, B cells, and Myeloid cells. These cells were exposed to 144 different small-molecule drugs, and differential gene expression was measured across more than 18,000 genes.
 
-The main dataset is held in de-train parquet file. The rows of this data are the cell type + small chemical compound pairs. Most of the columns are the 18,000+ individual genes and each entries are the numerical differential expression levels that the model needs to learn. There are also SMILES column which shows the 1D string representation of the actual chemical compound of the 144 drugs. Training data mostly contains the T cells, NK cells, and a few B cells and Myeloid cells. The unseen test data contains mostly just the B cells and Myeloid cells. 
+The main training dataset, provided as a Parquet file (`de-train.parquet`), contains rows representing unique combinations of cell type and drug compound. The majority of columns correspond to gene names, with each entry denoting the differential expression level induced by the drug. A positive value indicates gene up-regulation, while a negative value indicates down-regulation. The absolute magnitude reflects the strength of the perturbation effect. 
+
+An example of the SMILES string is shown in Table~\ref{tab:de_train}, where all entries for the drug clotrimazole share the same molecular representation. A visual rendering of clotrimazole’s chemical structure is provided in Figure~\ref{fig:smiles}, and its substructure-based encoding is discussed further in the Methods section.
+
 
 
 \begin{table}[htbp]
@@ -88,9 +103,59 @@ T regulatory cells & Clotrimazole & LSM-5341 & \makecell[l]{Clc1ccccc1C(c1ccccc1
 \label{tab:de_train}
 \end{table}
 
-The main training data is shown in Table~\ref{tab:de_train}. The numerical values of the differential expression level of each genes shows how significant each drug will boost or suppress  gene expression. A positive number (+) means up-regulation, and a negative  number (-) means down regulation. Larger the absolute value, the large statistical significance the perturbation effect will be. 
 
-The entry of the SMILES column is the 1D string representation of the 144 drug compounds. Figure~\ref{fig:smiles} shows the 3D structure of the 1st small molecule clotrimazole. 
+The distribution of cell types between training and test datasets is notably imbalanced. As shown in Figure~\ref{fig:traintest}, training data predominantly features CD4+/CD8+ T cells and NK cells, while the unseen test data focuses more on B cells and Myeloid cells. This cell-type domain shift presents a significant generalization challenge for predictive models.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1.0 \textwidth, height=0.3 \textwidth ]{train-test-split.png}
+  \caption{Split of Training Test data}
+  \label{fig:traintest}
+\end{figure}
+
+
+
+\section*{Methods}
+
+\subsection{EDA}
+
+As an initial step, I conducted exploratory data analysis to investigate which genes exhibit strong expression differences between healthy and cancerous conditions. One such gene is \textbf{CD69}, which is known to play a role in immune cell activation and has been previously associated with hematological malignancies.
+
+Figures~\ref{fig:CD69healthy} and~\ref{fig:CD69MPAL} show the expression levels of CD69 in healthy patients and patients with mixed phenotype acute leukemia (MPAL), respectively. In healthy individuals, CD69 expression is relatively low across most immune cell types (Figure~\ref{fig:CD69healthy}). In contrast, MPAL samples show strong overexpression of CD69 in T/NK cells and, notably, in Myeloid cells (Figure~\ref{fig:CD69MPAL}).
+
+These findings suggest that CD69 overexpression may be indicative of leukemic transformation or immune dysregulation in MPAL. Since over 18,000 genes are profiled in this dataset, identifying compounds that can selectively downregulate oncogene-like targets such as CD69 could be of therapeutic interest in blood cancers.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.3\textwidth]{CD69-health.png}
+  \caption{gene CD69 healthy}
+  \label{fig:CD69healthy}
+\end{figure}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.3\textwidth]{CD69-MPAL.png}
+  \caption{gene CD69 MPAL leukemia}
+  \label{fig:CD69MPAL}
+\end{figure}
+
+
+\subsection{Data Augmentation}
+
+One of the major challenges in this project is the disparity between the relatively low-dimensional input space—comprising categorical features such as cell types, small molecule (SM) drug names, SMILES strings, and control status—and the high-dimensional output space, which includes differential gene expression values for over 18,000 genes. To bridge this gap and improve model performance, I implemented several strategies for augmenting the input features.
+
+First, I computed summary statistics—mean, standard deviation, and median—of the gene expression levels grouped by both drug and cell type. These statistical features were added to both training and test data. Incorporating these values provided the model with useful priors and significantly improved baseline performance by offering a general view of how each drug-cell pair behaves.
+
+Second, I enriched the chemical representation of drugs by processing their SMILES (Simplified Molecular-Input Line-Entry System) strings. For instance, the compound clotrimazole, shown in Figure~\ref{fig:smiles}, was decomposed into chemical substructures (Figures~\ref{fig:smiles1} and~\ref{fig:smiles2}). I then built a sparse count matrix to represent the frequency of these substructures across all 144 compounds. This matrix was used as an additional set of features, enabling the model to capture chemical similarities and differences more explicitly.
+
+Third, I employed the \texttt{RDKit} chem informatics toolkit to compute Morgan Finger prints from the SMILES strings. These fingerprints provide a fixed-length numerical encoding that captures the presence and connectivity of molecular substructures. Adding these features allowed the model to learn chemical properties beyond the raw SMILES strings, offering a richer biochemical representation of each drug.
+
+Fourth, since both the cell type and drug compound columns are categorical, I applied standard encoding techniques. One-hot encoding and label encoding were used to transform these categories into numerical formats suitable for input into machine learning models.
+
+Given the large number of additional features introduced—particularly from the sparse substructure count matrix and Morgan Fingerprints—the dimensionality of the input space became very high. To address this and to reduce computational cost, I applied Principal Component Analysis (PCA) to project the augmented input features into a lower-dimensional space while retaining most of the variance. This step not only helped speed up model training but also reduced the risk of overfitting by eliminating noisy and redundant features.
+
 
 
 \begin{figure}[htbp]
@@ -114,51 +179,6 @@ The entry of the SMILES column is the 1D string representation of the 144 drug c
   \label{fig:smiles2}
 \end{figure}
 
-Figure~\ref{fig:traintest} shows that the Train and Test data also has unbalanced distribution. Train data is concentrated mostly on various types of the T cells and NK cells. The unavailable test data mostly focuses on the B cells and Myeloid cells. 
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=1.0 \textwidth, height=0.3 \textwidth ]{train-test-split.png}
-  \caption{Split of Training Test data}
-  \label{fig:traintest}
-\end{figure}
-
-
-\section*{Approach and Methodology}
-
-\subsection{EDA}
-
-First step I took is to run exploratory data analysis to identify on which genes are more important than the others. Gene CD69 is one of the common blood cancer cell lines that is over expressed among the healthy patients shown in Figure~\ref{fig:CD69healthy}, compare to the cancer patients shown in Figure~\ref{fig:CD69MPAL}. 
-
-For the cancer patients, the gene CD69 is over expressed among the T/NK cells, as well as in the Myeloid cells. It shows that the over expression of gene CD69 will have a strong correlation of blood cancer. There are also over 18000 genes analyzed, so any drug that can down regulate such cancer prone gene will be an ideal candidate for the cure to blood cancer. 
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.3\textwidth]{CD69-health.png}
-  \caption{gene CD69 healthy}
-  \label{fig:CD69healthy}
-\end{figure}
-
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.3\textwidth]{CD69-MPAL.png}
-  \caption{gene CD69 MPAL leukemia}
-  \label{fig:CD69MPAL}
-\end{figure}
-
-
-\subsection{Data Augmentation}
-
-A challenge of this project is that the input features only include several categorical columns, namely the cell types, the sm drug compounds, SMILES strings, and controls, yet the model needs to output numerical gene expression levels for over 18,000+ genes (columns) across all the cell types drug pairs. It's important to augment the input features prior to the ML models. 
-
-First, for both the training and test data, I add the numerical features such as mean, standard deviation, and median of the gene differential expression levels for both the sm drug and cell types as the input features. This dramatically improves model performance as the baseline statistics served as a general baseline for the model. 
-
-Second, I generate more features based on the SMILES string. For example, Figure~\ref{fig:smiles} shows the full small drug compound clotrimazole. I will break down the molecule into many sub units such as in Figure~\ref{fig:smiles1} and Figure~\ref{fig:smiles2}. I will then make a sparse count matrix to count the occurrence of each sub units from the 144 drugs. And this coount matrix will serve as part of the input features. 
-
-Third, to future augment the data, I also use the RDKIT Chem package to get the Morgan Fingerprint features from the SMILE drug compounds. The fingerprint is a numerical features to denote the strength and the location of the chemical bonds of the molecules. By augmenting the SMILES features, the model is able to learn more biological properties during the regression. Without the additional features, the model can only learn the name and the 1D string representation of the drug compounds.
-
-Last but not the least, the cell type and drug compound columns are categorical, in order for the models to run, I need to preprocess the categorical features into numerical features by using one-hot encoder and label encoder. 
 
 
 \subsection{Models}
@@ -170,12 +190,19 @@ Last but not the least, the cell type and drug compound columns are categorical,
   \label{fig:models}
 \end{figure}
 
-Figure~\ref{fig:models} shows the 2 model architectures that I used. On the left I have the MLP model. On the right I have the Transformer model. 
 
-For MLP, I use 2 separate MLP with 2 layers made of linear, batch norm, relu, dropout, etc., to get the cell type features and the drug compound features into the features space. The cell type features include the mean, std, median of the differential expression numerical values for the cell types and drug compounds. The SMILES features will include both the spare sub module count matrix as well as the Morgan Fingerprints. Then I concatenate both cell and drug features and then feed into another MLP in order to get out the differential expression for all cell-drug pairs and 18,000+ genes. 
+To model the relationship between cell types, drug compounds, and the resulting gene expression profiles, I implemented and compared two deep learning architectures: a Multi-Layer Perceptron (MLP) and a Transformer-based model, as visualized in Figure~\ref{fig:models}.
 
-For Transformer, I use 1 transformer encoder layer of 8 heads. I carefully separate out the categorical features and the numerical features. For categorical features like the cell type and drug compounds, I first make it Embedding so the model knows the values are categorical instead of numerical. I will then pass the categorical features into the transformer encoder layer. I will then concatenate the categorical features with the numerical features such as mean, std, median. Eventually I will pass everything into a MLP with 2 fully connected layers in order to get out the differential expression levels. 
 
+\paragraph{MLP Architecture:}
+The MLP model consists of a deep feedforward network designed to process high-dimensional continuous features. After data augmentation, the input dimension can be as high as 56,000+, so dimensionality reduction using PCA is optionally applied. The architecture includes four fully connected layers with decreasing hidden dimensions: 4096, 2048, 1024, and 512. Each layer is followed by batch normalization, ReLU activation, and dropout to improve generalization. The final output layer maps the 512-dimensional representation to 18,211 gene targets using a linear layer. This model directly learns a mapping from the augmented numerical features—including statistics (mean, std, median), Morgan fingerprints, and SMILES substructure counts—to gene expression profiles.
+
+
+\paragraph{Transformer-Based Architecture:}
+The second model is a TabTransformer-like architecture that separately processes categorical and continuous features. Categorical features, such as cell types and drug compounds, are one-hot encoded and projected into an embedding space using a linear layer. These embeddings are then passed through a Transformer encoder with one layer and eight attention heads to capture interactions between discrete categories. In parallel, the continuous features (e.g., gene statistics, SMILES fingerprints) are normalized and projected into the same embedding dimension using a fully connected branch with Layer Norm, ReLU, and dropout. The embeddings from both categorical and continuous branches are concatenated and passed through a final MLP with hidden size 1024 and dropout before producing the final output of 18,211 gene predictions.
+
+\paragraph{Design Motivation:}
+The MLP model leverages the full expressive power of dense connections and is particularly suited to large numerical feature spaces. The Transformer model introduces a more structured inductive bias, allowing it to learn complex interactions among categorical features while still benefiting from continuous inputs. By comparing these two architectures, this project explores how different neural inductive biases affect generalization on a high-dimensional, imbalanced biological prediction task.
 
 
 \section*{Evaluation}
@@ -187,7 +214,15 @@ For Transformer, I use 1 transformer encoder layer of 8 heads. I carefully separ
   \label{fig:rmse}
 \end{figure}
 
-Figure~\ref{fig:rmse} shows the main evaluation metrics of our models. For each row of cell type - drug pairs, I first calculate the Root Mean Square Error between the actual y expression level and the predicted y hat expression level, and average across the n columns. Then for the R rows, I will average out all the RMSE to get out a single number. This metrics make sense because this problem is essentially a multi regression problem. 
+To evaluate model performance, I use a custom variant of the Root Mean Square Error (RMSE), computed at the cell-drug pair level. Specifically, for each sample (i.e., a cell type and drug compound pair), I compute the RMSE across the 18,211 predicted gene expression values and then average this score across all samples. This metric is referred to as the Mean Row-wise RMSE (MRRMSE) and is well-suited to this multi-output regression task, as it treats each row independently and prevents genes with inherently higher variance from dominating the loss. The loss function is shown in Figure~\ref{fig:rmse}. 
+
+\subsection*{Training Setup}
+
+Both MLP and Transformer models are trained using the standard mean squared error (MSE) loss. I split the data into training and validation sets and monitored both training and validation loss over 10 epochs. The models are trained using the Adam optimizer with an initial learning rate of $1 \times 10^{-3}$, and I use a learning rate scheduler (`ReduceLROnPlateau`) to adapt the learning rate based on validation performance. The training loop includes model check pointing, where the model with the lowest validation loss is saved. Figure~\ref{fig:rmse} shows the training and validation loss curves, which help visualize convergence and potential overfitting.
+
+\subsection*{Test Evaluation}
+
+After training, I optionally run the model on a held-out test set and compute the final MSE to assess generalization. 
 
 
 
@@ -202,7 +237,9 @@ Figure~\ref{fig:rmse} shows the main evaluation metrics of our models. For each 
   \label{fig:training}
 \end{figure}
 
-Figure~\ref{fig:training} shows the trainging loss for both the MLP on the left and Transformers on the right. The MLP is slightly faster at loss convergence on the validation set, while Transformer needs to take slightly more epochs to achieve similar MRRMSE loss on the validation set. The graph also shows that the models might start to overfit on the training data because the validation loss tails off after roughly 100 epochs while the training loss decreases steadily. 
+
+Figure~\ref{fig:training} shows the MRRMSE loss curves for both MLP and Transformer models. The MLP model converges more quickly on the validation set, whereas the Transformer requires slightly more epochs to achieve a comparable level of validation loss. However, both models exhibit signs of overfitting after approximately 100 epochs, as indicated by the divergence between steadily decreasing training loss and plateauing validation loss.
+
 
 \begin{table}[htbp]
 \centering
@@ -219,17 +256,23 @@ Test       & 0.93 & 0.87 \\
 \label{tab:mrrmse_results}
 \end{table}
 
-Table~\ref{tab:mrrmse_results} shows the MRRMSE loss for the validation set and also the hidden test set on kaggle. MLP despite having better validation loss due to faster convergence compare to Transformer has higher loss on the actual test set. This means that the Transformer generalize to the unseen test set much better than the MLP. 
 
-Transformer is able to capture longer term dependency between the features. Due to the huge unbalance of the cell type categories between the training and test data, Transformer appears to be more robust. 
+As shown in Table~\ref{tab:mrrmse_results}, while the MLP achieves slightly better performance on the validation set due to faster convergence, it under performs on the hidden test set. In contrast, the Transformer achieves a lower MRRMSE on the test data, suggesting better generalization.
 
-For the best models on Kaggle, they all used an ensemble of 4-5 different models to achieve MRRMSE loss of roughly 0.75. 
+The Transformer model likely benefits from its attention mechanism, which helps capture dependencies between categorical and numerical features. This becomes especially advantageous in the presence of distribution shifts or imbalanced categories—such as the under representation of certain cell types in the training set compared to the test set.
+
+For reference, top-performing models on the Kaggle leader board utilized ensemble techniques combining 4–5 diverse models, achieving MRRMSE scores around 0.75.
 
 
 
 \section*{Conclusion}
 
-In conclusion, this project demonstrates that data augmentation and deep learning can significantly improve the prediction of gene expression changes in single cells exposed to chemical perturbations. By augmenting limited categorical inputs with statistical summaries, SMILES substructure counts, and molecular fingerprints, we enriched the feature space and enabled models to learn more meaningful biological patterns. Among the models tested, the Transformer model outperformed MLP on the unseen test data, highlighting its superior generalization in imbalanced settings where training and test cell types differ. While MLP offers faster convergence, Transformers are better suited for capturing complex relationships across high-dimensional gene expression outputs. Future work may include model ensembling, graph-based molecular encoders, and semi-supervised learning to further improve prediction accuracy and identify promising drug candidates for leukemia treatment.
+This project demonstrates that deep learning combined with feature engineering can significantly enhance the prediction of gene expression changes in single cells subjected to chemical perturbations. By augmenting limited categorical inputs with derived numerical features, such as statistical summaries, SMILES-based substructure counts, and molecular fingerprints, I was able to expand the feature space and improve models toward capturing more biologically meaningful patterns.
+
+Between the two models explored, the Transformer demonstrated superior generalization on the unseen test set, particularly in handling distribution shifts across cell types. This suggests that its attention mechanism is better equipped to model complex, high-dimensional relationships inherent in transcriptomic data. In contrast, the MLP model, while converging faster during training, was more prone to overfitting and exhibited higher test error.
+
+Future work could explore ensemble methods to combine the strengths of multiple models, as well as incorporate graph neural networks to better model molecular structures. In addition, semi-supervised learning could help leverage large amounts of unlabeled perturbation data, potentially improving performance and accelerating the discovery of candidate compounds for leukemia treatment.
+
 
 
 
@@ -237,9 +280,10 @@ In conclusion, this project demonstrates that data augmentation and deep learnin
 \section*{Code}
 
 The code for scPerturb is available on Github: 
-\href{https://github.com/tigeryi1998/scPerturb}{Link}
+\href{https://github.com/tigeryi1998/scPerturb}{Github Link}
 
-
+The 2023 NeurIPS Kaggle Competition:
+\href{https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/overview}{Kaggle Link}
 
 
 
@@ -261,10 +305,20 @@ Oelen, R., de Vries, D.H., Brugge, H. et al.
 \textit{Single-cell RNA-sequencing of peripheral blood mononuclear cells. Nature Communication 13, 3267 (2022)}.
 https://doi.org/10.1038/s41467-022-30893-5
 
+\bibitem{scGen}
+Lotfollahi, M., Naghipourfar, M., Theis, F.J.  
+\textit{scGen predicts single-cell perturbation responses.}  
+Nat Methods 16, 715–721 (2019). 
+https://doi.org/10.1038/s41592-019-0494-8
 
-
+\bibitem{GCNdrug}
+Cao, Z., Yuan, F.  
+\textit{Predicting drug-induced gene expression profiles using graph convolutional networks and transfer learning.}  
+Bioinformatics 37(19), 3245–3252 (2021). https://doi.org/10.1093/bioinformatics/btab264
 
 
 \end{thebibliography}
+
+
 
 \end{document} 

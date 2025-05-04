@@ -1,32 +1,62 @@
 # scPerturb
 
-This is the Github repo of the single cell Perturbation scPerturb for the NeurIPS 2023 Kaggle Competition. https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/overview
+This repository contains code for the NeurIPS 2023 Kaggle competition on single-cell perturbations: [Link to Kaggle Competition](https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/overview).
 
-You should have a folder called "data" in the main directory. You should download the data files in the "data" folder, especially the de_train.parquet main data file. The data is very big and it is available to download at https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/data
+## Folder Structure
 
-The report folder contains the paper pdf. The presentation folder contains the presentation pptx. 
+- **data/**: Contains the large dataset. The primary data file is `de_train.parquet`. Download the dataset from [Kaggle](https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/data).
+- **report/**: Contains the project paper in PDF format.
+- **presentation/**: Contains the project presentation in PPTX format.
 
-In order to run everything please follow the scripts. Alternatively you can also use miniconda to install the virtual enviroments. 
+## Setup Instructions
+
+Ensure you have a `data` folder in the main directory with the required dataset. Then, set up the environment by following these steps:
+
+1. Create a virtual environment:
+
+    ```bash
+    python3 -m venv myenv
+    ```
+
+2. Activate the virtual environment:
+
+    ```bash
+    source myenv/bin/activate
+    ```
+
+3. Install dependencies:
+
+    ```bash
+    pip3 install -r requirements.txt
+    ```
+
+4. (Optional) To deactivate the environment, use:
+
+    ```bash
+    deactivate
+    ```
+
+## Running the Code
+
+The main script is `main.py`, which supports training both an MLP (Multi-layer Perceptron) and a Transformer model. To switch between them, open `main.py` and modify the `main` function to select the desired model architecture.
+
+### To run the script:
 
 ```bash
-python3 -m venv myenv # create a new environment 
-source myenv/bin/activate # activate hte myenv
-pip3 install -r requirements.txt # install the dependency
+python3 main.py  # Run the main script to build and train the model
 ```
 
-The main script is called the main.py. Currently it supports 2 models to train: MLP multi layer preceptron, and Transformer. You need to change the main function between the MLP and Transformer to build the different models. Then you can run 
+### Workflow:
+1. Loads and processes data using `process.py`
+2. Builds the data loader for model input
+3. Defines model architecture in `model.py`
+4. Trains the model with `train.py`
+5. Generates predictions using `submit_mlp.py` or `submit_transformer.py`
 
-```bash
-python3 main.py # run the main script to build everything
-```
+## Notes
+- The dataset is large; ensure sufficient disk space.
+- If needed, use Kaggle's API to download data:
 
-The main function will first load and process the data in process.py
-
-Then it will build the dataloader as the model input. 
-
-The model architecture is defined in model.py 
-
-It will then call the train.py to train the model. 
-
-After training the model, it will call submit_mlp or submit_transformer to make inference and generate predictions. 
-
+    ```bash
+    kaggle competitions download -c open-problems-single-cell-perturbations
+    
