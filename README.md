@@ -2,12 +2,6 @@
 
 This repository contains code for the NeurIPS 2023 Kaggle competition on single-cell perturbations: [Link to Kaggle Competition](https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/overview).
 
-## Folder Structure
-
-- **data/**: Contains the large dataset. The primary data file is `de_train.parquet`. Download the dataset from [Kaggle](https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/data).
-- **report/**: Contains the project paper in PDF format.
-- **presentation/**: Contains the project presentation in PPTX format.
-
 ## Setup Instructions
 
 Ensure you have a `data` folder in the main directory with the required dataset. Then, set up the environment by following these steps:
@@ -62,7 +56,12 @@ python3 main.py  # Run the main script to build and train the model
     kaggle competitions download -c open-problems-single-cell-perturbations
     ```
 
-## structures
+## Folder Structure
+
+- **data/**: Contains the large dataset. The primary data file is `de_train.parquet`. Download the dataset from [Kaggle](https://www.kaggle.com/competitions/open-problems-single-cell-perturbations/data).
+- **report/**: Contains the project paper in PDF format.
+- **presentation/**: Contains the project presentation in PPTX format.
+
 ```
 scPerturb
 ├── data/
