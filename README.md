@@ -36,8 +36,40 @@ The main script is `main.py`, which supports training both an MLP (Multi-layer P
 
 ### To run the script:
 
+The default call to train model and submission 
+
 ```bash
-python3 main.py  # Run the main script to build and train the model
+python3 main.py  
+```
+
+To train transformer instead of MLP
+
+```bash
+python3 main.py --model-type Transformer
+```
+
+To Train with PCA dimension reduction
+
+```bash
+python3 main.py --run-pca
+```
+
+Only Train, no inference and submission 
+
+```bash
+python3 main.py --no-submit
+```
+
+Skip Training, just make inference and submission
+
+```bash
+python3 main.py --no-train
+```
+
+To customize training hyperparameters 
+
+```bash
+python3 main.py --model-type MLP --epochs 50 --batch-size 32 --learning-rate 1e-3 --optimizer adamw --scheduler plateau
 ```
 
 ### Workflow:
