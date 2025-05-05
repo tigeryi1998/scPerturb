@@ -16,7 +16,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from model import MLP, TabTransformer
 from dataset import create_dataloaders
-from utils import set_seed, get_optimizer, get_scheduler, plot_loss
+from utils import set_seed, get_optimizer, get_scheduler, plot_loss, MRRMSLoss
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -86,9 +86,10 @@ def train(model, train_loader, val_loader, criterion, optimizer, epochs=10, sche
     loss_plot_path = os.path.join(output_dir, "loss_plot.png")
     plot_loss(train_losses, val_losses,save_path=loss_plot_path)
 
+
 # Main function to handle dataset loading, model creation, and training
 def run_training(X_cat_train, X_cont_train, y_train, X_cat_test=None, X_cont_test=None, 
-                 model_type="MLP", batch_size=32, epochs=10, learning_rate=1e-3, optimizer_type="adam", scheduler_type="plateau"):
+                 model_type="MLP", batch_size=32, epochs=10, learning_rate=1e-3, optimizer_type="adamw", scheduler_type="plateau"):
     # Set random seed for reproducibility
     set_seed()
 
@@ -107,7 +108,8 @@ def run_training(X_cat_train, X_cont_train, y_train, X_cat_test=None, X_cont_tes
         raise ValueError("Invalid model type. Choose either 'MLP' or 'Transformer'.")
 
     # Define loss function
-    criterion = nn.MSELoss()  # Mean Squared Error loss for regression tasks
+    # criterion = nn.MSELoss()  # Mean Squared Error loss for regression tasks
+    criterion = MRRMSLoss()     # row wirse root mean square error self-defined 
 
     # Get optimizer and scheduler
     optimizer = get_optimizer(model, optimizer_name=optimizer_type, lr=learning_rate)
@@ -115,7 +117,6 @@ def run_training(X_cat_train, X_cont_train, y_train, X_cat_test=None, X_cont_tes
 
     # Train the model
     train(model, train_loader, val_loader, criterion, optimizer, epochs=epochs, scheduler=scheduler)
-
 
     # Test the model (optional)
     if test_loader:

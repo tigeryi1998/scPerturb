@@ -30,14 +30,12 @@ def set_seed(seed=1):
         torch.backends.cudnn.benchmark = False
     return print(f"Random seed set to {seed}")
 
-
 # NumPy version of Mean Row-wise RMSE
-def mrrmse_np(y_true, y_pred):
-    return np.mean(np.sqrt(np.mean((y_true - y_pred) ** 2, axis=1)))
+def mrrmse_np(y_true, y_pred, eps = 1e-8):
+    return np.mean(np.sqrt(np.mean((y_true - y_pred) ** 2, axis=1) + eps))
 
-# PyTorch version
-def mrrmse_torch(y_true, y_pred):
-    return torch.mean(torch.sqrt(torch.mean((y_true - y_pred) ** 2, dim=1)))
+def mrrmse_torch(y_true, y_pred, eps = 1e-8):
+    return torch.mean(torch.sqrt(torch.mean((y_true - y_pred) ** 2, dim=1) + eps))
 
 # Optional loss class for use with nn.Module
 class MRRMSLoss(nn.Module):

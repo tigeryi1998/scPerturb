@@ -48,10 +48,11 @@ python3 main.py  # Run the main script to build and train the model
 
 ### Workflow:
 1. Loads and processes data using `process.py`
-2. Builds the data loader for model input
+2. Builds the data loader for model input `dataset.py`
 3. Defines model architecture in `model.py`
 4. Trains the model with `train.py`
 5. Generates predictions using `submit_mlp.py` or `submit_transformer.py`
+6. Everything is orchestrated by `main.py`and parameters `config.py`
 
 ## Notes
 - The dataset is large; ensure sufficient disk space.
@@ -59,4 +60,26 @@ python3 main.py  # Run the main script to build and train the model
 
     ```bash
     kaggle competitions download -c open-problems-single-cell-perturbations
-    
+    ```
+
+## structures
+```
+scPerturb
+├── data/
+│   ├── de_train.parquet
+│   ├── id_map.csv
+│   └── sample_submission.csv
+├── report/
+├── presentation/
+├── pictures/
+├── requirements.txt  
+├── config.py 
+├── utils.py              
+├── process.py
+├── dataset.py
+├── model.py
+├── train.py
+├── submit_mlp.py
+├── submit_transformer.py
+└── main.py  
+```
